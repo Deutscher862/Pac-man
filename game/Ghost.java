@@ -15,6 +15,7 @@ public class Ghost extends AbstractDynamicMapElement {
         for(int i = 0 ; i < turnNumber; i++){
             this.direction = this.direction.next();
         }
+        System.out.println(this.getPosition().toString());
         super.move();
     }
 

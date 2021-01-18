@@ -6,7 +6,6 @@ public class Player extends AbstractDynamicMapElement {
         super(position, map, direction);
     }
 
-
     @Override
     public String toString() {
         return "p";

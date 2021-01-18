@@ -8,7 +8,7 @@ public class Map {
         this.dynamicMapElements = new AbstractDynamicMapElement[size.x][size.y];
         this.staticMapElements = new AbstractStaticMapElement[size.x][size.y];
     }
-
+    //zamiast mapy arralista duchów?
     public void showMap(){
         for(int i = 0; i < 32; i++){
             for(int j = 0; j < 28; j++){
@@ -53,6 +53,10 @@ public class Map {
 
     public boolean isOccupied(Vector2d position) {
         return objectAt(position) != null;
+    }
+
+    public AbstractStaticMapElement getStaticElement(Vector2d position){
+        return this.staticMapElements[position.x][position.y];
     }
 
     public Object objectAt(Vector2d position){

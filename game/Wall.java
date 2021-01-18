@@ -7,6 +7,6 @@ public class Wall extends AbstractStaticMapElement {
 
     @Override
     public String toString() {
-        return " ";
+        return "w";
     }
 }

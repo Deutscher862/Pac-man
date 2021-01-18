@@ -1,17 +1,16 @@
 package game;
 
 abstract class AbstractDynamicMapElement {
-    protected Vector2d position;
+    private final Vector2d initialPosition;
+    private Vector2d position;
     protected Direction direction;
     private static Map map;
 
     AbstractDynamicMapElement(Vector2d position, Map map, Direction direction){
+        this.initialPosition = position;
         this.position = position;
         this.direction = direction;
         AbstractDynamicMapElement.map = map;
-    }
-
-    protected AbstractDynamicMapElement() {
     }
 
     public void move(){
@@ -32,5 +31,13 @@ abstract class AbstractDynamicMapElement {
 
     public Vector2d getPosition() {
         return this.position;
+    }
+
+    public Vector2d getInitialPosition() {
+        return initialPosition;
+    }
+
+    public void setDirection(Direction direction) {
+        this.direction = direction;
     }
 }
