@@ -11,6 +11,9 @@ abstract class AbstractDynamicMapElement {
         AbstractDynamicMapElement.map = map;
     }
 
+    protected AbstractDynamicMapElement() {
+    }
+
     public void move(){
         Vector2d oldPosition = this.position;
         Vector2d newPosition;

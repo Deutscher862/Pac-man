@@ -1,7 +1,5 @@
 package game;
 
-import java.util.Arrays;
-
 public class Map {
     private final AbstractDynamicMapElement[][] dynamicMapElements;
     private final AbstractStaticMapElement[][] staticMapElements;
@@ -16,9 +14,10 @@ public class Map {
             for(int j = 0; j < 28; j++){
                 Object object = objectAt(new Vector2d(j, i));
                 if(object != null )
-                    System.out.print(object.toString());
-                else System.out.print("e");
+                    System.out.print(object.toString() + " ");
+                else System.out.print("  ");
             }
+            System.out.println();
         }
     }
 

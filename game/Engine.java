@@ -6,6 +6,8 @@ public class Engine {
     private final Map map;
     private final FileScanner reader;
     private final ArrayList<Ghost> ghostList;
+    private int lives;
+    private int points;
     private Player pacman;
 
     public Engine(){
@@ -14,6 +16,19 @@ public class Engine {
         this.ghostList = new ArrayList<>();
         placeObjectsAtMap();
         this.map.showMap();
+        this.lives = 3;
+        this.points = 0;
+        run();
+    }
+
+    public void run(){
+        for(int i = 0; i < 10; i++){
+            for(Ghost ghost : this.ghostList){
+                ghost.move();
+            }
+            pacman.move();
+            this.map.showMap();
+        }
     }
 
     private void placeObjectsAtMap(){
