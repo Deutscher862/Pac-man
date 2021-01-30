@@ -1,4 +1,4 @@
-package game;
+package Pacman.game;
 
 import java.util.Random;
 

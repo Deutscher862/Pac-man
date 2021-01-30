@@ -1,4 +1,4 @@
-package game;
+package Pacman.game;
 
 public class Player extends AbstractDynamicMapElement {
 

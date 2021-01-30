@@ -1,16 +1,22 @@
-package game;
+package Pacman.game;
+
+import javafx.stage.Stage;
 
 import java.util.ArrayList;
 
 public class Engine {
+    private final Stage stage;
     private final Map map;
     private final FileScanner reader;
     private final ArrayList<Ghost> ghostList;
+    private int roundNumber;
     private int lives;
     private int points;
     private Player pacman;
 
-    public Engine(){
+    public Engine(Stage stage){
+        this.stage = stage;
+        this.roundNumber = 1;
         this.reader = new FileScanner();
         this.map = new Map(new Vector2d(28, 32));
         this.ghostList = new ArrayList<>();
@@ -18,7 +24,8 @@ public class Engine {
         this.map.showMap();
         this.lives = 3;
         this.points = 0;
-        run();
+
+        stage.show();
     }
 
     public void run(){
@@ -33,7 +40,11 @@ public class Engine {
 
     private void movePacman(){
         pacman.move();
-
+        AbstractStaticMapElement staticMapElement = this.map.getStaticElement(pacman.getPosition());
+        if(staticMapElement != null){
+            this.points += staticMapElement.getValue();
+            this.map.removeStaticObject(staticMapElement);
+        }
     }
 
     private void placeObjectsAtMap(){
@@ -45,10 +56,9 @@ public class Engine {
             position = new Vector2d(column, row);
             Object object;
             switch (ch) {
-
                 case '0' -> object = new Wall(position);
-                case '1' -> object = new Coin(position);
-                case '2' -> object = new Star(position);
+                case '1' -> object = new Coin(position, this.roundNumber);
+                case '2' -> object = new Star(position, this.roundNumber);
                 case '4' -> {
                     object = new Ghost(position, this.map, Direction.NORTH);
                     this.ghostList.add((Ghost) object);

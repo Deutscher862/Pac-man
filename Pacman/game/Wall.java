@@ -1,8 +1,8 @@
-package game;
+package Pacman.game;
 
 public class Wall extends AbstractStaticMapElement {
     Wall(Vector2d position) {
-        super(position);
+        super(position, 0);
     }
 
     @Override
