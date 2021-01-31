@@ -2,8 +2,10 @@ package Pacman.visualizer;
 
 import Pacman.game.AbstractMapElement;
 import Pacman.game.Vector2d;
+import Pacman.game.Wall;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 
@@ -12,22 +14,21 @@ public class Tile extends StackPane {
     private final int size;
     private Shape shape;
 
-    public Tile(int size,Vector2d position, AbstractMapElement object){
+    public Tile(int size, Vector2d position, AbstractMapElement object) {
         this.size = size;
-        setContent(object);
+        if(object instanceof Wall) this.shape = new Rectangle(size, size);
+        else this.shape = new Circle(10);
         this.getChildren().add(this.shape);
-        this.setTranslateX(position.x*size+10);
-        this.setTranslateY(position.y*size+10);
+        setContent(object);
+        this.setTranslateX(position.x * size + 10);
+        this.setTranslateY(position.y * size + 10);
     }
 
     public void setContent(AbstractMapElement object) {
-        if(object != null){
-            this.shape = object.getShape();
-        }
-        else {
-            this.shape = new Rectangle(size, size);
+        if (object != null) {
+            this.shape.setFill(object.getColor());
+        } else {
             this.shape.setFill(Color.BLACK);
         }
-        //this.getChildren().set(0, this.shape);
     }
 }

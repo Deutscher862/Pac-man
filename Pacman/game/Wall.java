@@ -7,7 +7,7 @@ import javafx.scene.shape.Rectangle;
 
 public class Wall extends AbstractStaticMapElement {
     Wall(Vector2d position) {
-        super(position, 0, new Rectangle(20, 20, Color.BLUE));
+        super(position, 0,Color.BLUE);
     }
 
     @Override
