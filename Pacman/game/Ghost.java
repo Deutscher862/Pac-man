@@ -1,6 +1,8 @@
 package Pacman.game;
 
+import Pacman.visualizer.Tile;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 import java.util.Random;
 
@@ -8,7 +10,7 @@ public class Ghost extends AbstractDynamicMapElement {
     private final static Random rand = new Random();
 
     Ghost(Vector2d position, Map map, Direction direction) {
-        super(position, map, direction, Color.MAGENTA);
+        super(position, map, direction, new Rectangle(15, 15, Color.MAGENTA));
     }
 
     @Override

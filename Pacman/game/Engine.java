@@ -11,6 +11,7 @@ public class Engine {
     private final Stage stage;
     private final VizualizerFX vizualizer;
     private final Map map;
+    private int refreshTime;
     private final FileScanner reader;
     private final ArrayList<Ghost> ghostList=  new ArrayList<>();
     private int roundNumber;
@@ -19,12 +20,13 @@ public class Engine {
     private Player pacman;
 
     public Engine(Stage stage){
+        this.refreshTime = 100;
         this.stage = stage;
         this.roundNumber = 1;
         this.reader = new FileScanner();
         this.map = new Map(new Vector2d(28, 32));
         placeObjectsAtMap();
-        this.vizualizer = new VizualizerFX(this.map);
+        this.vizualizer = new VizualizerFX(stage, this.map, this);
         this.lives = 3;
         this.points = 0;
 
@@ -34,12 +36,23 @@ public class Engine {
     }
 
     public void run(){
-        for(int i = 0; i < 1000; i++){
-            moveDynamicElement(this.pacman);
-            for(Ghost ghost : this.ghostList){
-                moveDynamicElement(ghost);
+        new Thread(() ->{
+            while(lives > 0) {
+                try {
+                    Thread.sleep(this.refreshTime);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                moveDynamicElement(this.pacman);
+                for (Ghost ghost : this.ghostList) {
+                    moveDynamicElement(ghost);
+                }
             }
-        }
+        }).start();
+    }
+
+    public void setPlayerDirection(Direction direction){
+        this.pacman.setDirection(direction);
     }
 
     private void moveDynamicElement(AbstractDynamicMapElement object){

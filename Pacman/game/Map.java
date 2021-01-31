@@ -13,18 +13,6 @@ public class Map {
         this.numberOfCoins = 0;
     }
 
-    public void showMap(){
-        for(int i = 0; i < 32; i++){
-            for(int j = 0; j < 28; j++){
-                Object object = objectAt(new Vector2d(j, i));
-                if(object != null )
-                    System.out.print(object.toString() + " ");
-                else System.out.print("  ");
-            }
-            System.out.println();
-        }
-    }
-
     public void place(AbstractMapElement object){
         //obiekty na mapie podzieliłem na statyczne(monety, owoce i gwiazdki) i dynamiczne(pacman oraz duchy)
         Vector2d position;

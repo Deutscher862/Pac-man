@@ -1,12 +1,12 @@
 package Pacman.game;
 
-import javafx.scene.paint.Color;
+import javafx.scene.shape.Shape;
 
 abstract class AbstractStaticMapElement extends AbstractMapElement{
     private final int value;
 
-    public AbstractStaticMapElement(Vector2d position, int value, Color color) {
-        super(position, color);
+    public AbstractStaticMapElement(Vector2d position, int value, Shape shape) {
+        super(position, shape);
         this.value = value;
     }
 

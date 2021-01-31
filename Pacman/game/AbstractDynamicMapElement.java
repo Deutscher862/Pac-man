@@ -1,15 +1,14 @@
 package Pacman.game;
 
-import Pacman.visualizer.VizualizerFX;
-import javafx.scene.paint.Color;
+import javafx.scene.shape.Shape;
 
 abstract class AbstractDynamicMapElement extends AbstractMapElement{
     private final Vector2d initialPosition;
     protected Direction direction;
     private static Map map;
 
-    AbstractDynamicMapElement(Vector2d position, Map map, Direction direction, Color color){
-        super(position, color);
+    AbstractDynamicMapElement(Vector2d position, Map map, Direction direction, Shape shape){
+        super(position, shape);
         this.initialPosition = position;
         this.direction = direction;
         AbstractDynamicMapElement.map = map;
@@ -24,7 +23,6 @@ abstract class AbstractDynamicMapElement extends AbstractMapElement{
     }
 
     public void move(){
-        Vector2d oldPosition = this.position;
         Vector2d newPosition;
         newPosition = super.getPosition().Add(this.direction.toUnitVector());
         //jeśli wyjdzie po za mapę to wraca po drugiej stronie
