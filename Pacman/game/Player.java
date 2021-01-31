@@ -5,7 +5,7 @@ import javafx.scene.paint.Color;
 public class Player extends AbstractDynamicMapElement {
 
     Player(Vector2d position, Map map, Direction direction) {
-        super(position, map, direction, Color.YELLOW);
+        super(position, map, direction,  Color.YELLOW);
     }
 
     @Override

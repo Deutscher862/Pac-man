@@ -34,20 +34,28 @@ public class Engine {
     }
 
     public void run(){
-        for(int i = 0; i < 100; i++){
+        for(int i = 0; i < 1000; i++){
+            moveDynamicElement(this.pacman);
             for(Ghost ghost : this.ghostList){
-                ghost.move();
+                moveDynamicElement(ghost);
             }
-            movePacman();
         }
     }
 
-    private void movePacman(){
-        pacman.move();
-        AbstractStaticMapElement staticMapElement = this.map.getStaticElement(pacman.getPosition());
-        if(staticMapElement != null){
-            this.points += staticMapElement.getValue();
-            this.map.removeStaticObject(staticMapElement);
+    private void moveDynamicElement(AbstractDynamicMapElement object){
+        Vector2d oldPosition;
+        Vector2d newPosition;
+        oldPosition = object.getPosition();
+        object.move();
+        newPosition = object.getPosition();
+        if(!oldPosition.equals(newPosition)) {
+            AbstractStaticMapElement staticMapElement = this.map.getStaticElement(pacman.getPosition());
+            if (object instanceof Player && staticMapElement != null) {
+                this.points += staticMapElement.getValue();
+                this.map.removeStaticObject(staticMapElement);
+            }
+            this.vizualizer.changeColor(oldPosition, this.map.objectAt(oldPosition));
+            this.vizualizer.changeColor(newPosition, object);
         }
     }
 
@@ -81,6 +89,5 @@ public class Engine {
                 row += 1;
             }
         }
-        System.out.println();
     }
 }

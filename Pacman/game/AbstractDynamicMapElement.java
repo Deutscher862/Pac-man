@@ -1,5 +1,6 @@
 package Pacman.game;
 
+import Pacman.visualizer.VizualizerFX;
 import javafx.scene.paint.Color;
 
 abstract class AbstractDynamicMapElement extends AbstractMapElement{
@@ -23,11 +24,14 @@ abstract class AbstractDynamicMapElement extends AbstractMapElement{
     }
 
     public void move(){
+        Vector2d oldPosition = this.position;
         Vector2d newPosition;
         newPosition = super.getPosition().Add(this.direction.toUnitVector());
         //jeśli wyjdzie po za mapę to wraca po drugiej stronie
         if(newPosition.x == -1) newPosition = new Vector2d(27, newPosition.y);
         else if(newPosition.x == 28) newPosition = new Vector2d(0, newPosition.y);
-        if(map.canMoveTo(newPosition)) super.position = newPosition;
+        if(map.canMoveTo(newPosition)){
+            super.position = newPosition;
+        }
     }
 }

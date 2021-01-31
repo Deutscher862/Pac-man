@@ -17,15 +17,14 @@ public class Tile extends StackPane {
         this.position = position;
         this.rectangle = new Rectangle(size, size);
         this.rectangle.setStroke(Color.BLACK);
-        if(object != null) this.rectangle.setFill(object.getColor());
-        else this.rectangle.setFill(Color.BLACK);
+        setContent(object);
         this.getChildren().add(rectangle);
         this.setTranslateX(this.position.x*size+10);
         this.setTranslateY(this.position.y*size+10);
-
     }
 
-    public void setColor(Color color) {
-        this.rectangle.setFill(color);
+    public void setContent(AbstractMapElement object) {
+        if(object != null) this.rectangle.setFill(object.getColor());
+        else this.rectangle.setFill(Color.BLACK);
     }
 }

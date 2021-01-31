@@ -1,5 +1,6 @@
 package Pacman.visualizer;
 
+import Pacman.game.AbstractMapElement;
 import Pacman.game.Map;
 import Pacman.game.Vector2d;
 import javafx.scene.control.Button;
@@ -30,5 +31,9 @@ public class VizualizerFX {
     }
     public Pane getRoot() {
         return root;
+    }
+
+    public void changeColor(Vector2d position, AbstractMapElement object){
+        this.grid[position.x][position.y].setContent(object);
     }
 }
