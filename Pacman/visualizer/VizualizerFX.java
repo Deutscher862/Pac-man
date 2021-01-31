@@ -2,6 +2,9 @@ package Pacman.visualizer;
 
 import Pacman.game.*;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import javafx.scene.input.KeyEvent;
@@ -10,12 +13,20 @@ public class VizualizerFX {
     private final Pane root;
     private final Map map;
     private final Engine engine;
+    private final Text rightPanel;
     private final Tile[][] grid = new Tile[28][32];
 
     public VizualizerFX(Stage stage, Map map, Engine engine){
         this.root = new Pane();
         this.map = map;
         this.engine = engine;
+
+        this.rightPanel = new Text();
+        this.rightPanel.setFill(Color.WHITE);
+        this.rightPanel.setFont(Font.font("Verdana", 35));
+        this.rightPanel.setTranslateX(600);
+        this.rightPanel.setTranslateY(40);
+        this.root.getChildren().add(rightPanel);
 
         for(int i = 0; i < 28; i++){
             for(int j = 0; j < 32; j++){
@@ -41,5 +52,13 @@ public class VizualizerFX {
 
     public void changeColor(Vector2d position, AbstractMapElement object){
         this.grid[position.x][position.y].setContent(object);
+    }
+
+    public void UpdateRightPanel(){
+        this.rightPanel.setText("Points: " + this.engine.getPoints()
+                            + "\nLives: " + this.engine.getLives()
+                            + "\nRound: " + this.engine.getRound()
+                            + "\nCoins left: " + this.map.getNumberOfCoins()
+        );
     }
 }

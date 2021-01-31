@@ -1,8 +1,6 @@
 package Pacman.game;
 
-import Pacman.visualizer.Tile;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 
 public class Star extends AbstractStaticMapElement {
 

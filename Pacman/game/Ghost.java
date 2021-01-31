@@ -18,9 +18,11 @@ public class Ghost extends AbstractDynamicMapElement {
         Direction testDirection = this.direction;
         ArrayList<Direction> possibleDirections = new ArrayList<>();
         for(int i =0; i < 4; i++){
-            if(map.canMoveTo(this.position.Add(testDirection.toUnitVector()))){
+            Vector2d possiblePosition = this.position.Add(testDirection.toUnitVector());
+            if(possiblePosition.x == -1) possiblePosition = new Vector2d(27, possiblePosition.y);
+            else if(possiblePosition.x == 28) possiblePosition = new Vector2d(0, possiblePosition.y);
+            if(map.canMoveTo(possiblePosition))
                 possibleDirections.add(testDirection);
-            }
             testDirection = testDirection.next();
         }
         int turnNumber = rand.nextInt(possibleDirections.size());

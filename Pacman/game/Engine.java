@@ -47,12 +47,30 @@ public class Engine {
                 for (Ghost ghost : this.ghostList) {
                     moveDynamicElement(ghost);
                 }
+                this.vizualizer.UpdateRightPanel();
             }
         }).start();
     }
 
+    public int getLives() {
+        return lives;
+    }
+
+    public int getPoints() {
+        return points;
+    }
+
+    public int getRound() {
+        return this.roundNumber;
+    }
+
     public void setPlayerDirection(Direction direction){
         this.pacman.setDirection(direction);
+    }
+
+    private void informAboutNewPosition(Vector2d oldPosition, AbstractDynamicMapElement object){
+        this.vizualizer.changeColor(oldPosition, this.map.objectAt(oldPosition));
+        this.vizualizer.changeColor(object.getPosition(), object);
     }
 
     private void moveDynamicElement(AbstractDynamicMapElement object){
@@ -67,9 +85,23 @@ public class Engine {
                 this.points += staticMapElement.getValue();
                 this.map.removeStaticObject(staticMapElement);
             }
-            this.vizualizer.changeColor(oldPosition, this.map.objectAt(oldPosition));
-            this.vizualizer.changeColor(newPosition, object);
+            //jeśli duch i pacman są na tym samym polu
+            else if(object instanceof Ghost && object.getPosition().equals(this.pacman.getPosition())){
+                if(!this.pacman.getPowerUp()){
+                    this.lives -= 1;
+                    kill(this.pacman);
+                }
+                else kill(object);
+
+            }
+            informAboutNewPosition(oldPosition, object);
         }
+    }
+
+    private void kill(AbstractDynamicMapElement object){
+        Vector2d oldPosition = object.getPosition();
+        object.setPosition(object.getInitialPosition());
+        informAboutNewPosition(oldPosition, object);
     }
 
     private void placeObjectsAtMap(){

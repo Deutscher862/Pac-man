@@ -1,14 +1,21 @@
 package Pacman.game;
 
-import Pacman.visualizer.Tile;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Shape;
 
 public class Player extends AbstractDynamicMapElement {
+    private boolean powerUp;
 
     Player(Vector2d position, Map map, Direction direction) {
         super(position, map, direction, Color.YELLOW);
+        this.powerUp = false;
+    }
+
+    public void setPowerUp(boolean powerUp) {
+        this.powerUp = powerUp;
+    }
+
+    public boolean getPowerUp(){
+        return this.powerUp;
     }
 
     @Override

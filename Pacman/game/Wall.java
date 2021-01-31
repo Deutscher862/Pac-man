@@ -1,9 +1,6 @@
 package Pacman.game;
 
-import Pacman.visualizer.Tile;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
 
 public class Wall extends AbstractStaticMapElement {
     Wall(Vector2d position) {

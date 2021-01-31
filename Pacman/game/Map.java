@@ -13,14 +13,22 @@ public class Map {
         this.numberOfCoins = 0;
     }
 
+    public AbstractStaticMapElement getStaticElement(Vector2d position){
+        return this.staticMapElements[position.x][position.y];
+    }
+
+    public int getNumberOfCoins() {
+        return numberOfCoins;
+    }
+
     public void place(AbstractMapElement object){
         //obiekty na mapie podzieliłem na statyczne(monety, owoce i gwiazdki) i dynamiczne(pacman oraz duchy)
         Vector2d position;
         if(object instanceof AbstractStaticMapElement){
             position = object.getPosition();
             if(!isOccupied(position)){
-                //zwiększam licznik monet i gwiazdek na mapie, by móc ustalić kiedy należy zakończyć grę
-                if(!(object instanceof Fruit)) this.numberOfCoins += 1;
+                //zwiększam licznik monet na mapie, by móc ustalić kiedy należy zakończyć grę
+                if(object instanceof Coin) this.numberOfCoins += 1;
                 this.staticMapElements[position.x][position.y] = (AbstractStaticMapElement) object;
             }
         } else if(object instanceof AbstractDynamicMapElement){
@@ -35,16 +43,12 @@ public class Map {
 
     public void removeStaticObject(AbstractStaticMapElement object){
         Vector2d position = object.getPosition();
-        if(!(object instanceof Fruit)) this.numberOfCoins -= 1;
+        if(object instanceof Coin) this.numberOfCoins -= 1;
         this.staticMapElements[position.x][position.y] = null;
     }
 
     public boolean isOccupied(Vector2d position) {
         return objectAt(position) != null;
-    }
-
-    public AbstractStaticMapElement getStaticElement(Vector2d position){
-        return this.staticMapElements[position.x][position.y];
     }
 
     public AbstractMapElement objectAt(Vector2d position){

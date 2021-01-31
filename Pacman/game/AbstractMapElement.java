@@ -15,5 +15,9 @@ public abstract class AbstractMapElement{
         return position;
     }
 
+    public void setPosition(Vector2d position) {
+        this.position = position;
+    }
+
     public Color getColor(){return this.color;}
 }
