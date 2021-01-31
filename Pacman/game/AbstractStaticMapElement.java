@@ -1,19 +1,17 @@
 package Pacman.game;
 
-abstract class AbstractStaticMapElement {
-    protected final Vector2d position;
+import javafx.scene.paint.Color;
+
+abstract class AbstractStaticMapElement extends AbstractMapElement{
     private final int value;
 
-    public AbstractStaticMapElement(Vector2d position, int value) {
-        this.position = position;
+    public AbstractStaticMapElement(Vector2d position, int value, Color color) {
+        super(position, color);
         this.value = value;
-    }
-
-    public Vector2d getPosition() {
-        return this.position;
     }
 
     public int getValue() {
         return value;
     }
+
 }

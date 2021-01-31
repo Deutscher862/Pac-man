@@ -1,14 +1,18 @@
 package Pacman.game;
 
+import Pacman.visualizer.VizualizerFX;
+import javafx.scene.Scene;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
 
 public class Engine {
     private final Stage stage;
+    private final VizualizerFX vizualizer;
     private final Map map;
     private final FileScanner reader;
-    private final ArrayList<Ghost> ghostList;
+    private final ArrayList<Ghost> ghostList=  new ArrayList<>();
     private int roundNumber;
     private int lives;
     private int points;
@@ -19,13 +23,14 @@ public class Engine {
         this.roundNumber = 1;
         this.reader = new FileScanner();
         this.map = new Map(new Vector2d(28, 32));
-        this.ghostList = new ArrayList<>();
         placeObjectsAtMap();
-        this.map.showMap();
+        this.vizualizer = new VizualizerFX(this.map);
         this.lives = 3;
         this.points = 0;
 
-        stage.show();
+        this.stage.setTitle("Pacman");
+        this.stage.setScene(new Scene(vizualizer.getRoot(), 1000, 800, Color.BLACK));
+        this.stage.show();
     }
 
     public void run(){
@@ -34,7 +39,6 @@ public class Engine {
                 ghost.move();
             }
             movePacman();
-            this.map.showMap();
         }
     }
 
@@ -54,7 +58,7 @@ public class Engine {
         int column = 0;
         for (char ch: stringMap.toCharArray()) {
             position = new Vector2d(column, row);
-            Object object;
+            AbstractMapElement object;
             switch (ch) {
                 case '0' -> object = new Wall(position);
                 case '1' -> object = new Coin(position, this.roundNumber);

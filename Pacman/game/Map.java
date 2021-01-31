@@ -25,11 +25,11 @@ public class Map {
         }
     }
 
-    public void place(Object object){
+    public void place(AbstractMapElement object){
         //obiekty na mapie podzieliłem na statyczne(monety, owoce i gwiazdki) i dynamiczne(pacman oraz duchy)
         Vector2d position;
         if(object instanceof AbstractStaticMapElement){
-            position = ((AbstractStaticMapElement) object).getPosition();
+            position = object.getPosition();
             if(!isOccupied(position)){
                 //zwiększam licznik monet i gwiazdek na mapie, by móc ustalić kiedy należy zakończyć grę
                 if(!(object instanceof Fruit)) this.numberOfCoins += 1;
@@ -47,6 +47,7 @@ public class Map {
 
     public void removeStaticObject(AbstractStaticMapElement object){
         Vector2d position = object.getPosition();
+        if(!(object instanceof Fruit)) this.numberOfCoins -= 1;
         this.staticMapElements[position.x][position.y] = null;
     }
 
@@ -58,7 +59,7 @@ public class Map {
         return this.staticMapElements[position.x][position.y];
     }
 
-    public Object objectAt(Vector2d position){
+    public AbstractMapElement objectAt(Vector2d position){
         if(this.player != null && this.player.getPosition().equals(position)) return this.player;
         else{
             for(Ghost ghost : this.ghostList){
