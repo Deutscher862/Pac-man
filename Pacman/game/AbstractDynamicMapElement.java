@@ -5,7 +5,7 @@ import javafx.scene.paint.Color;
 abstract class AbstractDynamicMapElement extends AbstractMapElement{
     private final Vector2d initialPosition;
     protected Direction direction;
-    private static Map map;
+    protected static Map map;
 
     AbstractDynamicMapElement(Vector2d position, Map map, Direction direction, Color color){
         super(position, color);

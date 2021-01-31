@@ -1,9 +1,8 @@
 package Pacman.game;
 
-import Pacman.visualizer.Tile;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class Ghost extends AbstractDynamicMapElement {
@@ -15,10 +14,17 @@ public class Ghost extends AbstractDynamicMapElement {
 
     @Override
     public void move(){
-        int turnNumber = rand.nextInt(4);
-        for(int i = 0 ; i < turnNumber; i++){
-            this.direction = this.direction.next();
+        //szukam w które strony może poruszyć się duch, nastęnie losuję jedną z nich
+        Direction testDirection = this.direction;
+        ArrayList<Direction> possibleDirections = new ArrayList<>();
+        for(int i =0; i < 4; i++){
+            if(map.canMoveTo(this.position.Add(testDirection.toUnitVector()))){
+                possibleDirections.add(testDirection);
+            }
+            testDirection = testDirection.next();
         }
+        int turnNumber = rand.nextInt(possibleDirections.size());
+        this.direction = possibleDirections.get(turnNumber);
         super.move();
     }
 
