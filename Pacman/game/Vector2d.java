@@ -1,10 +1,12 @@
 package Pacman.game;
 
 import java.util.Objects;
+import java.util.Random;
 
 public class Vector2d {
     public final int x;
     public final int y;
+    private static Random rand = new Random();
 
     public Vector2d(int x, int y) {
         this.x = x;
@@ -31,5 +33,9 @@ public class Vector2d {
 
     public Vector2d Add(Vector2d other){
         return new Vector2d(this.x + other.x, this.y + other.y);
+    }
+
+    public Vector2d getRandomPosition(){
+        return new Vector2d(rand.nextInt(this.x), rand.nextInt(this.y));
     }
 }

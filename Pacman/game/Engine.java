@@ -11,6 +11,7 @@ public class Engine {
     private final Stage stage;
     private final VizualizerFX vizualizer;
     private final Map map;
+    private final Vector2d mapSize;
     private int refreshTime;
     private final FileScanner reader;
     private final ArrayList<Ghost> ghostList=  new ArrayList<>();
@@ -20,11 +21,12 @@ public class Engine {
     private Player pacman;
 
     public Engine(Stage stage){
-        this.refreshTime = 100;
+        this.refreshTime = 200;
         this.stage = stage;
         this.roundNumber = 1;
         this.reader = new FileScanner();
-        this.map = new Map(new Vector2d(28, 32));
+        this.mapSize = new Vector2d(28, 32);
+        this.map = new Map(this.mapSize);
         placeObjectsAtMap();
         this.vizualizer = new VizualizerFX(stage, this.map, this);
         this.lives = 3;
@@ -74,6 +76,7 @@ public class Engine {
     }
 
     private void moveDynamicElement(AbstractDynamicMapElement object){
+        if(object.getDirection() == null) return;
         Vector2d oldPosition;
         Vector2d newPosition;
         oldPosition = object.getPosition();
@@ -84,24 +87,40 @@ public class Engine {
             if (object instanceof Player && staticMapElement != null) {
                 this.points += staticMapElement.getValue();
                 this.map.removeStaticObject(staticMapElement);
-            }
-            //jeśli duch i pacman są na tym samym polu
-            else if(object instanceof Ghost && object.getPosition().equals(this.pacman.getPosition())){
-                if(!this.pacman.getPowerUp()){
-                    this.lives -= 1;
-                    kill(this.pacman);
+                //jeśli gracz wejdzie na pole z duchem
+                for(Ghost ghost: this.ghostList){
+                    if(ghost.getPosition().equals(object.position))
+                        killObject(ghost);
                 }
-                else kill(object);
-
+            }
+            //jeśli duch wejdzie na pole z graczem
+            else if(object instanceof Ghost && object.getPosition().equals(this.pacman.getPosition())){
+                killObject(object);
             }
             informAboutNewPosition(oldPosition, object);
         }
     }
 
-    private void kill(AbstractDynamicMapElement object){
-        Vector2d oldPosition = object.getPosition();
-        object.setPosition(object.getInitialPosition());
-        informAboutNewPosition(oldPosition, object);
+    private void killObject(AbstractDynamicMapElement ghost){
+        AbstractDynamicMapElement objectToBeKilled;
+        if(!this.pacman.getPowerUp()){
+            objectToBeKilled = this.pacman;
+            this.lives -= 1;
+            setPlayerDirection(null);
+        }
+        else objectToBeKilled = ghost;
+
+        Vector2d oldPosition = objectToBeKilled.getPosition();
+        objectToBeKilled.setPosition(objectToBeKilled.getInitialPosition());
+        informAboutNewPosition(oldPosition, objectToBeKilled);
+    }
+
+    private void generateFruit(){
+        Vector2d newFruitPosition = this.mapSize.getRandomPosition();
+        while(this.map.isOccupied(newFruitPosition))
+            newFruitPosition = this.mapSize.getRandomPosition();
+        Fruit fruit = new Fruit(newFruitPosition, this.roundNumber);
+        this.map.place(fruit);
     }
 
     private void placeObjectsAtMap(){
@@ -121,7 +140,7 @@ public class Engine {
                     this.ghostList.add((Ghost) object);
                 }
                 case '8' -> {
-                    object = new Player(position, this.map, Direction.EAST);
+                    object = new Player(position, this.map, null);
                     this.pacman = (Player) object;
                 }
                 case '9' -> object = null;
