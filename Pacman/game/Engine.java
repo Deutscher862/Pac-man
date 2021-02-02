@@ -21,12 +21,12 @@ public class Engine {
     private Player pacman;
 
     public Engine(Stage stage){
-        this.refreshTime = 200;
+        this.refreshTime = 100;
         this.stage = stage;
         this.roundNumber = 1;
         this.reader = new FileScanner();
         this.mapSize = new Vector2d(28, 32);
-        this.map = new Map(this.mapSize);
+        this.map = new Map(this.mapSize, this);
         placeObjectsAtMap();
         this.vizualizer = new VizualizerFX(stage, this.map, this);
         this.lives = 3;
@@ -68,11 +68,12 @@ public class Engine {
 
     public void setPlayerDirection(Direction direction){
         this.pacman.setDirection(direction);
+        this.pacman.rotateImage();
     }
 
     private void informAboutNewPosition(Vector2d oldPosition, AbstractDynamicMapElement object){
-        this.vizualizer.changeColor(oldPosition, this.map.objectAt(oldPosition));
-        this.vizualizer.changeColor(object.getPosition(), object);
+        this.vizualizer.changeImage(oldPosition, this.map.objectAt(oldPosition));
+        this.vizualizer.changeImage(object.getPosition(), object);
     }
 
     private void moveDynamicElement(AbstractDynamicMapElement object){
@@ -85,7 +86,10 @@ public class Engine {
         if(!oldPosition.equals(newPosition)) {
             AbstractStaticMapElement staticMapElement = this.map.getStaticElement(pacman.getPosition());
             if (object instanceof Player && staticMapElement != null) {
+                //uruchamiam tryb powerUp
+                if(staticMapElement instanceof Star) setPowerUpMode(true);
                 this.points += staticMapElement.getValue();
+                this.vizualizer.changeImage(staticMapElement.getPosition(), null);
                 this.map.removeStaticObject(staticMapElement);
                 //jeśli gracz wejdzie na pole z duchem
                 for(Ghost ghost: this.ghostList){
@@ -98,6 +102,14 @@ public class Engine {
                 killObject(object);
             }
             informAboutNewPosition(oldPosition, object);
+        }
+    }
+
+    private void setPowerUpMode(Boolean powerUpOn) {
+        this.pacman.setPowerUp(powerUpOn);
+        for(Ghost ghost : this.ghostList){
+            if(powerUpOn) ghost.setImage(Ghost.getVulnerableImage());
+            else ghost.setImage(ghost.getImage());
         }
     }
 
@@ -123,6 +135,10 @@ public class Engine {
         this.map.place(fruit);
     }
 
+    public void startNewRound() {
+        this.roundNumber += 1;
+    }
+
     private void placeObjectsAtMap(){
         String stringMap = this.reader.readMapFromTxt();
         Vector2d position;
@@ -136,7 +152,7 @@ public class Engine {
                 case '1' -> object = new Coin(position, this.roundNumber);
                 case '2' -> object = new Star(position, this.roundNumber);
                 case '4' -> {
-                    object = new Ghost(position, this.map, Direction.NORTH);
+                    object = new Ghost(position, this.map, Direction.NORTH, this.ghostList.size()+1);
                     this.ghostList.add((Ghost) object);
                 }
                 case '8' -> {

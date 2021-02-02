@@ -1,15 +1,17 @@
 package Pacman.game;
 
-import javafx.scene.paint.Color;
+import javafx.scene.image.Image;
 
 import java.util.ArrayList;
 import java.util.Random;
 
 public class Ghost extends AbstractDynamicMapElement {
     private final static Random rand = new Random();
+    private static Image vulnerableImage;
 
-    Ghost(Vector2d position, Map map, Direction direction) {
-        super(position, map, direction, Color.MAGENTA);
+    Ghost(Vector2d position, Map map, Direction direction, int number) {
+        super(position, map, direction, "resources/ghost" + number + ".png");
+        Ghost.vulnerableImage = new Image("resources/vulnerableGhost.png");
     }
 
     @Override
@@ -28,6 +30,10 @@ public class Ghost extends AbstractDynamicMapElement {
         int turnNumber = rand.nextInt(possibleDirections.size());
         this.direction = possibleDirections.get(turnNumber);
         super.move();
+    }
+
+    public static Image getVulnerableImage() {
+        return vulnerableImage;
     }
 
     @Override

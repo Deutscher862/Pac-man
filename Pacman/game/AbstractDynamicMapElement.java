@@ -1,14 +1,12 @@
 package Pacman.game;
 
-import javafx.scene.paint.Color;
-
 abstract class AbstractDynamicMapElement extends AbstractMapElement{
     private final Vector2d initialPosition;
     protected Direction direction;
     protected static Map map;
 
-    AbstractDynamicMapElement(Vector2d position, Map map, Direction direction, Color color){
-        super(position, color);
+    AbstractDynamicMapElement(Vector2d position, Map map, Direction direction, String path){
+        super(position, path);
         this.initialPosition = position;
         this.direction = direction;
         AbstractDynamicMapElement.map = map;

@@ -1,23 +1,28 @@
 package Pacman.game;
 
-import javafx.scene.paint.Color;
+import javafx.scene.image.Image;
 
 public abstract class AbstractMapElement{
     protected Vector2d position;
-    private final Color color;
+    private Image image;
 
-    public AbstractMapElement(Vector2d position, Color color){
+    public AbstractMapElement(Vector2d position, String path){
         this.position = position;
-        this.color = color;
+        this.image = new Image(path, 20, 20, false, false);
     }
 
     public Vector2d getPosition() {
         return position;
     }
 
+    public Image getImage(){return this.image;}
+
     public void setPosition(Vector2d position) {
         this.position = position;
     }
 
-    public Color getColor(){return this.color;}
+    public void setImage(Image image){
+        this.image = image;
+    }
+
 }

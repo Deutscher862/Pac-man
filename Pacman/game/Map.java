@@ -5,11 +5,13 @@ import java.util.ArrayList;
 public class Map {
     private Player player;
     private int numberOfCoins;
+    private final Engine engine;
     private final ArrayList<Ghost> ghostList = new ArrayList<>();
     private final AbstractStaticMapElement[][] staticMapElements;
 
-    public Map(Vector2d size) {
+    public Map(Vector2d size, Engine engine) {
         this.staticMapElements = new AbstractStaticMapElement[size.x][size.y];
+        this.engine = engine;
         this.numberOfCoins = 0;
     }
 
@@ -45,6 +47,7 @@ public class Map {
         Vector2d position = object.getPosition();
         if(object instanceof Coin) this.numberOfCoins -= 1;
         this.staticMapElements[position.x][position.y] = null;
+        if(this.numberOfCoins == 0) this.engine.startNewRound();
     }
 
     public boolean isOccupied(Vector2d position) {

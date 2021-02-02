@@ -7,7 +7,7 @@ import java.util.Scanner;
 public class FileScanner {
     public String readMapFromTxt(){
         try {
-            File map = new File("./src/resources/map.txt");
+            File map = new File("src/resources/map.txt");
             Scanner myReader = new Scanner(map);
             StringBuilder stringMap = new StringBuilder();
             while(myReader.hasNext())

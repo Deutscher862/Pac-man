@@ -2,33 +2,31 @@ package Pacman.visualizer;
 
 import Pacman.game.AbstractMapElement;
 import Pacman.game.Vector2d;
-import Pacman.game.Wall;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Shape;
 
 public class Tile extends StackPane {
     //pojedyncza płytka reprezentująca pojedyncze pole na mapie
-    private final int size;
-    private Shape shape;
+    private final GraphicsContext border;
+    private final Vector2d position;
+    private static int size;
+    private static Canvas canvas;
 
-    public Tile(int size, Vector2d position, AbstractMapElement object) {
-        this.size = size;
-        if(object instanceof Wall) this.shape = new Rectangle(size, size);
-        else this.shape = new Circle(10);
-        this.getChildren().add(this.shape);
-        setContent(object);
-        this.setTranslateX(position.x * size + 10);
-        this.setTranslateY(position.y * size + 10);
+    public Tile(Canvas canvas, int size, Vector2d position, AbstractMapElement object) {
+        Tile.canvas = canvas;
+        Tile.size = size;
+        this.position = position;
+        this.getChildren().add(Tile.canvas);
+        this.border = Tile.canvas.getGraphicsContext2D();
+        setImage(object);
     }
 
-    public void setContent(AbstractMapElement object) {
-        if (object != null) {
-            this.shape.setFill(object.getColor());
-        } else {
-            this.shape.setFill(Color.BLACK);
-        }
+    public void setImage(AbstractMapElement object){
+        Image objectImage;
+        if(object == null) objectImage = new Image("resources/null.png");
+        else objectImage = object.getImage();
+        this.border.drawImage(objectImage, this.position.x * Tile.size, this.position.y*Tile.size);
     }
 }
