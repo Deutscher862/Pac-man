@@ -7,15 +7,15 @@ public class Map {
     private int numberOfCoins;
     private final Engine engine;
     private final ArrayList<Ghost> ghostList = new ArrayList<>();
-    private final AbstractStaticMapElement[][] staticMapElements;
+    private final StaticMapElement[][] staticMapElements;
 
     public Map(Vector2d size, Engine engine) {
-        this.staticMapElements = new AbstractStaticMapElement[size.x][size.y];
+        this.staticMapElements = new StaticMapElement[size.x][size.y];
         this.engine = engine;
         this.numberOfCoins = 0;
     }
 
-    public AbstractStaticMapElement getStaticElement(Vector2d position){
+    public StaticMapElement getStaticElement(Vector2d position){
         return this.staticMapElements[position.x][position.y];
     }
 
@@ -30,12 +30,12 @@ public class Map {
     public void place(AbstractMapElement object){
         //obiekty na mapie podzieliłem na statyczne(monety, owoce i gwiazdki) i dynamiczne(pacman oraz duchy)
         Vector2d position;
-        if(object instanceof AbstractStaticMapElement){
+        if(object instanceof StaticMapElement){
             position = object.getPosition();
             if(!isOccupied(position)){
                 //zwiększam licznik monet na mapie, by móc ustalić kiedy należy zakończyć grę
-                if(object instanceof Coin) this.numberOfCoins += 1;
-                this.staticMapElements[position.x][position.y] = (AbstractStaticMapElement) object;
+                if(((StaticMapElement) object).getType() == StaticElementType.Coin) this.numberOfCoins += 1;
+                this.staticMapElements[position.x][position.y] = (StaticMapElement) object;
             }
         } else if(object instanceof AbstractDynamicMapElement){
             if(object instanceof Player) this.player = (Player) object;
@@ -44,12 +44,13 @@ public class Map {
     }
 
     public boolean canMoveTo(Vector2d position){
-        return !(objectAt(position) instanceof Wall);
+        StaticMapElement staticMapElement = this.staticMapElements[position.x][position.y];
+        return staticMapElement == null || staticMapElement.getType() != StaticElementType.Wall;
     }
 
-    public void removeStaticObject(AbstractStaticMapElement object){
+    public void removeStaticObject(StaticMapElement object){
         Vector2d position = object.getPosition();
-        if(object instanceof Coin) this.numberOfCoins -= 1;
+        if(object.getType() == StaticElementType.Coin) this.numberOfCoins -= 1;
         if(this.numberOfCoins % 50 == 0) this.engine.generateFruit();
         this.staticMapElements[position.x][position.y] = null;
         if(this.numberOfCoins == 0) this.engine.startNewRound();

@@ -5,7 +5,6 @@ import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
 public class Engine {
     private final Stage stage;
@@ -95,11 +94,11 @@ public class Engine {
         object.move();
         newPosition = object.getPosition();
         if(!oldPosition.equals(newPosition)) {
-            AbstractStaticMapElement staticMapElement = this.map.getStaticElement(newPosition);
+            StaticMapElement staticMapElement = this.map.getStaticElement(newPosition);
             if (object instanceof Player && staticMapElement != null) {
                 //uruchamiam tryb powerUp
-                if(staticMapElement instanceof Star) setPowerUpMode(true);
-                this.points += staticMapElement.getValue();
+                if(staticMapElement.getType() == StaticElementType.Star) setPowerUpMode(true);
+                this.points += staticMapElement.getPointValue();
                 this.vizualizer.changeImage(staticMapElement.getPosition(), null);
                 this.map.removeStaticObject(staticMapElement);
                 //jeśli gracz wejdzie na pole z duchem
@@ -133,7 +132,6 @@ public class Engine {
                     },
                     2000
             );
-
         }
     }
 
@@ -165,7 +163,7 @@ public class Engine {
         Vector2d newFruitPosition = this.mapSize.getRandomPosition();
         while(this.map.isOccupied(newFruitPosition))
             newFruitPosition = this.mapSize.getRandomPosition();
-        Fruit fruit = new Fruit(newFruitPosition, this.roundNumber);
+        StaticMapElement fruit = new StaticMapElement(newFruitPosition, "resources/fruit.png", 5*this.roundNumber, StaticElementType.Fruit);
         this.map.place(fruit);
         this.vizualizer.changeImage(newFruitPosition, fruit);
     }
@@ -183,9 +181,9 @@ public class Engine {
             position = new Vector2d(column, row);
             AbstractMapElement object;
             switch (ch) {
-                case '0' -> object = new Wall(position);
-                case '1' -> object = new Coin(position, this.roundNumber);
-                case '2' -> object = new Star(position, this.roundNumber);
+                case '0' -> object = new StaticMapElement(position, "resources/wall.jpg", 0, StaticElementType.Wall);
+                case '1' -> object = new StaticMapElement(position, "resources/coin.png", this.roundNumber, StaticElementType.Coin);
+                case '2' -> object = new StaticMapElement(position, "resources/star.png", 15*this.roundNumber, StaticElementType.Star);
                 case '4' -> {
                     object = new Ghost(position, this.map, Direction.NORTH, this.ghostList.size()+1);
                     this.ghostList.add((Ghost) object);
