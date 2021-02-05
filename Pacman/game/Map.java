@@ -50,7 +50,7 @@ public class Map {
     public void removeStaticObject(AbstractStaticMapElement object){
         Vector2d position = object.getPosition();
         if(object instanceof Coin) this.numberOfCoins -= 1;
-        //if(this.numberOfCoins % 50 == 0) this.engine.generateFruit();
+        if(this.numberOfCoins % 50 == 0) this.engine.generateFruit();
         this.staticMapElements[position.x][position.y] = null;
         if(this.numberOfCoins == 0) this.engine.startNewRound();
     }

@@ -57,6 +57,7 @@ public class VizualizerFX {
     }
 
     public void changeImage(Vector2d position, AbstractMapElement object){
+        this.grid[position.x][position.y].setImage(null);
         this.grid[position.x][position.y].setImage(object);
     }
 

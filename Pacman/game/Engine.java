@@ -5,15 +5,16 @@ import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class Engine {
     private final Stage stage;
     private final VizualizerFX vizualizer;
     private final Map map;
     private final Vector2d mapSize;
-    private int refreshTime;
     private final FileScanner reader;
     private final ArrayList<Ghost> ghostList=  new ArrayList<>();
+    private int refreshTime;
     private int roundNumber;
     private int lives;
     private int points;
@@ -37,20 +38,31 @@ public class Engine {
     }
 
     public void run(){
-        new Thread(() ->{
+        Thread t1 = new Thread(() ->{
             while(lives > 0) {
                 try {
-                    Thread.sleep(this.refreshTime);
+                    Thread.sleep(100);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 moveDynamicElement(this.pacman);
-                for (Ghost ghost : this.ghostList) {
-                    moveDynamicElement(ghost);
-                }
                 this.vizualizer.UpdateRightPanel();
             }
-        }).start();
+        });
+        t1.start();
+
+        Thread t2 = new Thread(() ->{
+            while(lives > 0) {
+                try {
+                    Thread.sleep(300);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                for (Ghost ghost : this.ghostList)
+                    moveDynamicElement(ghost);
+            }
+        });
+        t2.start();
     }
 
     public int getLives() {
@@ -76,14 +88,14 @@ public class Engine {
     }
 
     private void moveDynamicElement(AbstractDynamicMapElement object){
-        if(object.getDirection() == null) return;
+        if(object.getDirection() == null || object.isRespawning()) return;
         Vector2d oldPosition;
         Vector2d newPosition;
         oldPosition = object.getPosition();
         object.move();
         newPosition = object.getPosition();
         if(!oldPosition.equals(newPosition)) {
-            AbstractStaticMapElement staticMapElement = this.map.getStaticElement(pacman.getPosition());
+            AbstractStaticMapElement staticMapElement = this.map.getStaticElement(newPosition);
             if (object instanceof Player && staticMapElement != null) {
                 //uruchamiam tryb powerUp
                 if(staticMapElement instanceof Star) setPowerUpMode(true);
@@ -105,10 +117,23 @@ public class Engine {
     }
 
     private void setPowerUpMode(Boolean powerUpOn) {
+        System.out.println(powerUpOn);
         this.pacman.setPowerUp(powerUpOn);
         for(Ghost ghost : this.ghostList){
             if(powerUpOn) ghost.setImage(Ghost.getVulnerableImage());
-            else ghost.setImage(ghost.getImage());
+            else ghost.setImage(ghost.getInitialImage());
+        }
+        if(powerUpOn) {
+            new java.util.Timer().schedule(
+                    new java.util.TimerTask() {
+                        @Override
+                        public void run() {
+                            setPowerUpMode(false);
+                        }
+                    },
+                    2000
+            );
+
         }
     }
 
@@ -121,9 +146,19 @@ public class Engine {
         }
         else objectToBeKilled = ghost;
 
+        objectToBeKilled.setRespawning(true);
         Vector2d oldPosition = objectToBeKilled.getPosition();
         objectToBeKilled.setPosition(objectToBeKilled.getInitialPosition());
         informAboutNewPosition(oldPosition, objectToBeKilled);
+        new java.util.Timer().schedule(
+                new java.util.TimerTask() {
+                    @Override
+                    public void run() {
+                        objectToBeKilled.setRespawning(false);
+                    }
+                },
+                3000
+        );
     }
 
     public void generateFruit(){
@@ -132,6 +167,7 @@ public class Engine {
             newFruitPosition = this.mapSize.getRandomPosition();
         Fruit fruit = new Fruit(newFruitPosition, this.roundNumber);
         this.map.place(fruit);
+        this.vizualizer.changeImage(newFruitPosition, fruit);
     }
 
     public void startNewRound() {
