@@ -13,6 +13,18 @@ public class Vector2d {
         this.y = y;
     }
 
+    public Direction getDirectionTowardsVector(Vector2d endPosition){
+        if(this.x != endPosition.x ){
+            if(this.x > endPosition.x) return Direction.WEST;
+            else return Direction.EAST;
+        }
+        else if(this.y != endPosition.y){
+            if(this.y > endPosition.y) return Direction.NORTH;
+            else return Direction.SOUTH;
+        }
+        else return null;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -31,7 +43,7 @@ public class Vector2d {
         return ("(" + this.x +  ", " + this.y + ")");
     }
 
-    public Vector2d Add(Vector2d other){
+    public Vector2d add(Vector2d other){
         return new Vector2d(this.x + other.x, this.y + other.y);
     }
 

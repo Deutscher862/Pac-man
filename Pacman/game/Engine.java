@@ -4,7 +4,6 @@ import Pacman.visualizer.VizualizerFX;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-
 import java.util.ArrayList;
 
 public class Engine {
@@ -127,7 +126,7 @@ public class Engine {
         informAboutNewPosition(oldPosition, objectToBeKilled);
     }
 
-    private void generateFruit(){
+    public void generateFruit(){
         Vector2d newFruitPosition = this.mapSize.getRandomPosition();
         while(this.map.isOccupied(newFruitPosition))
             newFruitPosition = this.mapSize.getRandomPosition();
