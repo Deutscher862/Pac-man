@@ -28,12 +28,5 @@ public class Player extends AbstractDynamicMapElement {
             this.imageDirection = this.imageDirection.next();
             this.setImage(iv.snapshot(null, null));
         }
-
     }
-
-    @Override
-    public String toString() {
-        return "p";
-    }
-
 }

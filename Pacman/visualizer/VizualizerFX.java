@@ -15,6 +15,7 @@ public class VizualizerFX {
     private final Map map;
     private final Engine engine;
     private final Text rightPanel;
+    private final Text gameOverInformation;
     private final Tile[][] grid = new Tile[28][32];
 
     public VizualizerFX(Stage stage, Map map, Engine engine){
@@ -26,12 +27,24 @@ public class VizualizerFX {
         canvas.setTranslateY(50);
         this.root.getChildren().add(canvas);
 
+        //panel informujący o statystkach gracza
         this.rightPanel = new Text();
         this.rightPanel.setFill(Color.WHITE);
         this.rightPanel.setFont(Font.font("Verdana", 35));
-        this.rightPanel.setTranslateX(600);
-        this.rightPanel.setTranslateY(40);
+        this.rightPanel.setTranslateX(650);
+        this.rightPanel.setTranslateY(100);
         this.root.getChildren().add(rightPanel);
+
+        //informacja o końcu gry
+        this.gameOverInformation = new Text();
+        this.gameOverInformation.setText("Game over!");
+        this.gameOverInformation.setFill(Color.WHITE);
+        this.gameOverInformation.setFont(Font.font("Verdana", 50));
+        this.gameOverInformation.setTranslateX(650);
+        this.gameOverInformation.setTranslateY(400);
+        this.gameOverInformation.setVisible(false);
+        this.root.getChildren().add(gameOverInformation);
+
 
         for(int i = 0; i < 28; i++){
             for(int j = 0; j < 32; j++){
@@ -53,6 +66,10 @@ public class VizualizerFX {
     }
     public Pane getRoot() {
         return root;
+    }
+
+    public void setGameOverInformation(){
+        this.gameOverInformation.setVisible(true);
     }
 
     public void changeImage(Vector2d position, AbstractMapElement object){

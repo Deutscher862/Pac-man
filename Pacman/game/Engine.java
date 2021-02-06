@@ -19,8 +19,6 @@ public class Engine {
     private int lives;
     private int points;
     private Player pacman;
-    private Thread playerMove;
-    private Thread ghostsMove;
     private boolean paused;
 
     public Engine(Stage stage){
@@ -43,8 +41,8 @@ public class Engine {
 
     public void run(){
         this.paused = false;
-        playerMove = new Thread(() ->{
-            while(!this.paused && lives > 0) {
+        Thread playerMove = new Thread(() -> {
+            while (!this.paused && lives > 0) {
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
@@ -65,8 +63,8 @@ public class Engine {
         });
         playerMove.start();
 
-        ghostsMove = new Thread(() ->{
-            while(!this.paused && lives > 0) {
+        Thread ghostsMove = new Thread(() -> {
+            while (!this.paused && lives > 0) {
                 try {
                     Thread.sleep(this.ghostVelocity);
                 } catch (InterruptedException e) {
@@ -108,7 +106,7 @@ public class Engine {
     }
 
     private void moveDynamicElement(AbstractDynamicMapElement object){
-        if(object.getDirection() == null || object.isRespawning()) return;
+        if((object instanceof Player && object.getDirection() == null) || object.isRespawning()) return;
         Vector2d oldPosition;
         Vector2d newPosition;
         oldPosition = object.getPosition();
@@ -189,15 +187,20 @@ public class Engine {
     }
 
     public void startNewRound() {
-        this.roundNumber += 1;
-        if(this.ghostVelocity > 75)
-            this.ghostVelocity -= 25;
-        this.pacman.setDirection(null);
+        if(this.lives == 0){
+            this.vizualizer.setGameOverInformation();
+        }
+        else {
+            this.roundNumber += 1;
+            if (this.ghostVelocity > 75)
+                this.ghostVelocity -= 25;
+            this.pacman.setDirection(null);
 
-        this.map.clear();
-        placeObjectsAtMap();
-        this.vizualizer.resetGrid();
-        run();
+            this.map.clear();
+            placeObjectsAtMap();
+            this.vizualizer.resetGrid();
+            run();
+        }
     }
 
     public void endGame(){

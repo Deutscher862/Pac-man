@@ -7,20 +7,18 @@ import java.util.*;
 public class Ghost extends AbstractDynamicMapElement {
     private final Image initialImage;
     private static Image vulnerableImage;
-    private static Random rand;
 
     Ghost(Vector2d position, Map map, Direction direction, int number) {
         super(position, map, direction, "resources/ghost" + number + ".png");
         this.initialImage = new Image("resources/ghost" + number + ".png");
         Ghost.vulnerableImage = new Image("resources/vulnerableGhost.png");
-        Ghost.rand = new Random();
     }
 
-    private void BFS(boolean[][] visited, Queue<Vector2d> positionsToVisit, Vector2d[][] lastPosition, Vector2d currentPlayerPosition){
+    private void BFS(boolean[][] visited, Queue<Vector2d> positionsToVisit, Vector2d[][] lastPosition, Vector2d targetPosition){
         while(!positionsToVisit.isEmpty()){
             //zdejmuję pozycję z kolejki
             Vector2d currentPosition = positionsToVisit.remove();
-            if(currentPosition.equals(currentPlayerPosition)) return;
+            if(currentPosition.equals(targetPosition)) return;
             Direction currentDirection = Direction.NORTH;
             Vector2d possiblePosition;
 
@@ -45,7 +43,12 @@ public class Ghost extends AbstractDynamicMapElement {
             return getPositionToMove(lastPosition, lastPosition[currentPosition.x][currentPosition.y]);
     }
 
-    private void setDirectionTowardsPosition(Vector2d position){
+    private void setDirectionTowardsPosition(Vector2d targetPosition){
+        if(this.position.equals(targetPosition)){
+            this.direction = null;
+            return;
+        }
+
         boolean[][] visited = new boolean[28][32];
         for(int i = 0; i < 28; i++){
             for(int j = 0; j < 32; j++){
@@ -55,11 +58,12 @@ public class Ghost extends AbstractDynamicMapElement {
         visited[this.position.x][this.position.y] = true;
 
         Vector2d[][] lastPosition = new Vector2d[28][32];
+        lastPosition[this.position.x][this.position.y] = this.position;
         Queue<Vector2d> positionsToVisit = new LinkedList<>();
         positionsToVisit.add(this.position);
-        BFS(visited, positionsToVisit, lastPosition, position);
+        BFS(visited, positionsToVisit, lastPosition, targetPosition);
 
-        Vector2d newPosition = getPositionToMove(lastPosition, position);
+        Vector2d newPosition = getPositionToMove(lastPosition, targetPosition);
         this.direction = this.position.getDirectionTowardsVector(newPosition);
     }
 
@@ -71,7 +75,7 @@ public class Ghost extends AbstractDynamicMapElement {
             setDirectionTowardsPosition(this.getInitialPosition());
         //w przeciwnym wypadku duchy gonią gracza
         else setDirectionTowardsPosition(map.getPlayer().getPosition());
-
+        if(this.direction == null) return;
         super.move();
     }
 
@@ -81,10 +85,5 @@ public class Ghost extends AbstractDynamicMapElement {
 
     public Image getInitialImage(){
         return this.initialImage;
-    }
-
-    @Override
-    public String toString() {
-        return "g";
     }
 }
