@@ -15,11 +15,11 @@ public abstract class AbstractMapElement{
         return position;
     }
 
-    public Image getImage(){return this.image;}
-
     public void setPosition(Vector2d position) {
         this.position = position;
     }
+
+    public Image getImage(){return this.image;}
 
     public void setImage(Image image){
         this.image = image;

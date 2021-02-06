@@ -12,12 +12,12 @@ public class Player extends AbstractDynamicMapElement {
         this.imageDirection = Direction.EAST;
     }
 
-    public void setPowerUp(boolean powerUp) {
-        this.powerUp = powerUp;
-    }
-
     public boolean getPowerUp(){
         return this.powerUp;
+    }
+
+    public void setPowerUp(boolean powerUp) {
+        this.powerUp = powerUp;
     }
 
     public void rotateImage(){

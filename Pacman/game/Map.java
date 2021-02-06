@@ -3,11 +3,11 @@ package Pacman.game;
 import java.util.ArrayList;
 
 public class Map {
-    private Player player;
-    private int numberOfCoins;
     private final Engine engine;
     private final ArrayList<Ghost> ghostList = new ArrayList<>();
     private final StaticMapElement[][] staticMapElements;
+    private Player player;
+    private int numberOfCoins;
 
     public Map(Vector2d size, Engine engine) {
         this.staticMapElements = new StaticMapElement[size.x][size.y];

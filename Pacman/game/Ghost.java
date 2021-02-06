@@ -5,13 +5,17 @@ import javafx.scene.image.Image;
 import java.util.*;
 
 public class Ghost extends AbstractDynamicMapElement {
-    private final Image initialImage;
     private static Image vulnerableImage;
+    private final Image initialImage;
 
     Ghost(Vector2d position, Map map, Direction direction, int number) {
         super(position, map, direction, "resources/ghost" + number + ".png");
         this.initialImage = new Image("resources/ghost" + number + ".png");
         Ghost.vulnerableImage = new Image("resources/vulnerableGhost.png");
+    }
+
+    public static Image getVulnerableImage() {
+        return vulnerableImage;
     }
 
     private void BFS(boolean[][] visited, Queue<Vector2d> positionsToVisit, Vector2d[][] lastPosition, Vector2d targetPosition){
@@ -77,10 +81,6 @@ public class Ghost extends AbstractDynamicMapElement {
         else setDirectionTowardsPosition(map.getPlayer().getPosition());
         if(this.direction == null) return;
         super.move();
-    }
-
-    public static Image getVulnerableImage() {
-        return vulnerableImage;
     }
 
     public Image getInitialImage(){

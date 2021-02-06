@@ -1,10 +1,10 @@
 package Pacman.game;
 
 abstract class AbstractDynamicMapElement extends AbstractMapElement{
-    private final Vector2d initialPosition;
-    private boolean respawning;
-    protected Direction direction;
     protected static Map map;
+    private final Vector2d initialPosition;
+    protected Direction direction;
+    private boolean respawning;
 
     AbstractDynamicMapElement(Vector2d position, Map map, Direction direction, String path){
         super(position, path);
@@ -22,16 +22,16 @@ abstract class AbstractDynamicMapElement extends AbstractMapElement{
         return direction;
     }
 
+    public void setDirection(Direction direction) {
+        this.direction = direction;
+    }
+
     public boolean isRespawning() {
         return respawning;
     }
 
     public void setRespawning(boolean respawning) {
         this.respawning = respawning;
-    }
-
-    public void setDirection(Direction direction) {
-        this.direction = direction;
     }
 
     public void move(){

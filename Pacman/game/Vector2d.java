@@ -4,9 +4,9 @@ import java.util.Objects;
 import java.util.Random;
 
 public class Vector2d {
+    private static final Random rand = new Random();
     public final int x;
     public final int y;
-    private static Random rand = new Random();
 
     public Vector2d(int x, int y) {
         this.x = x;

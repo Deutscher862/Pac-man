@@ -8,7 +8,6 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 
 public class Engine {
-    private final Stage stage;
     private final VizualizerFX vizualizer;
     private final Map map;
     private final Vector2d mapSize;
@@ -23,7 +22,6 @@ public class Engine {
 
     public Engine(Stage stage){
         this.ghostVelocity = 300;
-        this.stage = stage;
         this.roundNumber = 1;
         this.reader = new FileScanner();
         this.paused = true;
@@ -34,9 +32,9 @@ public class Engine {
         this.lives = 3;
         this.points = 0;
 
-        this.stage.setTitle("Pacman");
-        this.stage.setScene(new Scene(vizualizer.getRoot(), 1000, 800, Color.BLACK));
-        this.stage.show();
+        stage.setTitle("Pacman");
+        stage.setScene(new Scene(vizualizer.getRoot(), 1000, 800, Color.BLACK));
+        stage.show();
     }
 
     public void run(){
