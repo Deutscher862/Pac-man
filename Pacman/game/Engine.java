@@ -190,9 +190,11 @@ public class Engine {
 
     public void startNewRound() {
         this.roundNumber += 1;
-        this.map.clear();
         if(this.ghostVelocity > 75)
-        this.ghostVelocity -= 25;
+            this.ghostVelocity -= 25;
+        this.pacman.setDirection(null);
+
+        this.map.clear();
         placeObjectsAtMap();
         this.vizualizer.resetGrid();
         run();
