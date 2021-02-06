@@ -45,7 +45,7 @@ public class Ghost extends AbstractDynamicMapElement {
             return getPositionToMove(lastPosition, lastPosition[currentPosition.x][currentPosition.y]);
     }
 
-    private void setDirectionTowardsPlayer(){
+    private void setDirectionTowardsPosition(Vector2d position){
         boolean[][] visited = new boolean[28][32];
         for(int i = 0; i < 28; i++){
             for(int j = 0; j < 32; j++){
@@ -57,33 +57,20 @@ public class Ghost extends AbstractDynamicMapElement {
         Vector2d[][] lastPosition = new Vector2d[28][32];
         Queue<Vector2d> positionsToVisit = new LinkedList<>();
         positionsToVisit.add(this.position);
-        Vector2d currentPlayerPosition = map.getPlayer().getPosition();
-        BFS(visited, positionsToVisit, lastPosition, currentPlayerPosition);
+        BFS(visited, positionsToVisit, lastPosition, position);
 
-        Vector2d newPosition = getPositionToMove(lastPosition, currentPlayerPosition);
+        Vector2d newPosition = getPositionToMove(lastPosition, position);
         this.direction = this.position.getDirectionTowardsVector(newPosition);
-    }
-
-    private void setRandomDirection(){
-        Direction testDirection = this.direction;
-        ArrayList<Direction> possibleDirections = new ArrayList<>();
-        for(int i =0; i < 4; i++){
-            Vector2d possiblePosition = this.position.add(testDirection.toUnitVector());
-            if(possiblePosition.x == -1) possiblePosition = new Vector2d(27, possiblePosition.y);
-            else if(possiblePosition.x == 28) possiblePosition = new Vector2d(0, possiblePosition.y);
-            if(map.canMoveTo(possiblePosition))
-                possibleDirections.add(testDirection);
-            testDirection = testDirection.next();
-        }
-        int turnNumber = Ghost.rand.nextInt(possibleDirections.size());
-        this.direction = possibleDirections.get(turnNumber);
     }
 
     @Override
     public void move(){
-        if(map.getPlayer().isRespawning())
-            setRandomDirection();
-        else setDirectionTowardsPlayer();
+        Player pacman = map.getPlayer();
+        //jeśli gracz się odradza lub zjadł gwiazdkę, duchy wracają na pozycje startowe
+        if(pacman.isRespawning() || pacman.getPowerUp())
+            setDirectionTowardsPosition(this.getInitialPosition());
+        //w przeciwnym wypadku duchy gonią gracza
+        else setDirectionTowardsPosition(map.getPlayer().getPosition());
 
         super.move();
     }

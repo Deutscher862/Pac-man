@@ -15,17 +15,16 @@ public class VizualizerFX {
     private final Map map;
     private final Engine engine;
     private final Text rightPanel;
-    private final Canvas canvas;
     private final Tile[][] grid = new Tile[28][32];
 
     public VizualizerFX(Stage stage, Map map, Engine engine){
         this.root = new Pane();
         this.map = map;
         this.engine = engine;
-        this.canvas = new Canvas(600, 800);
-        this.canvas.setTranslateX(30);
-        this.canvas.setTranslateY(50);
-        this.root.getChildren().add(this.canvas);
+        Canvas canvas = new Canvas(600, 800);
+        canvas.setTranslateX(30);
+        canvas.setTranslateY(50);
+        this.root.getChildren().add(canvas);
 
         this.rightPanel = new Text();
         this.rightPanel.setFill(Color.WHITE);
@@ -37,7 +36,7 @@ public class VizualizerFX {
         for(int i = 0; i < 28; i++){
             for(int j = 0; j < 32; j++){
                 Vector2d position = new Vector2d(i, j);
-                this.grid[i][j] = new Tile(this.canvas, 20, position, this.map.objectAt(position));
+                this.grid[i][j] = new Tile(canvas, 20, position, this.map.objectAt(position));
                 this.root.getChildren().add(this.grid[i][j]);
             }
         }
@@ -48,7 +47,7 @@ public class VizualizerFX {
                 case RIGHT,D -> engine.setPlayerDirection(Direction.EAST);
                 case DOWN,S -> engine.setPlayerDirection(Direction.SOUTH);
                 case LEFT,A -> engine.setPlayerDirection(Direction.WEST);
-                //case ESCAPE -> engine.end();
+                case ESCAPE -> engine.endGame();
             }
         });
     }
@@ -61,7 +60,18 @@ public class VizualizerFX {
         this.grid[position.x][position.y].setImage(object);
     }
 
-    public void UpdateRightPanel(){
+    public void resetGrid(){
+        Vector2d position;
+        for(int i = 0; i < 28; i++){
+            for(int j = 0; j < 32; j++){
+                position = new Vector2d(i, j);
+                this.grid[position.x][position.y].setImage(this.map.objectAt(position));
+            }
+        }
+        updateRightPanel();
+    }
+
+    public void updateRightPanel(){
         this.rightPanel.setText("Points: " + this.engine.getPoints()
                             + "\nLives: " + this.engine.getLives()
                             + "\nRound: " + this.engine.getRound()

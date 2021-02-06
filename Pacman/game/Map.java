@@ -43,6 +43,13 @@ public class Map {
         }
     }
 
+    public void clear(){
+        for(int i = 0; i < 28; i++){
+            for(int j = 0; j < 32; j++)
+                this.staticMapElements[i][j] = null;
+        }
+    }
+
     public boolean canMoveTo(Vector2d position){
         StaticMapElement staticMapElement = this.staticMapElements[position.x][position.y];
         return staticMapElement == null || staticMapElement.getType() != StaticElementType.Wall;
@@ -51,9 +58,10 @@ public class Map {
     public void removeStaticObject(StaticMapElement object){
         Vector2d position = object.getPosition();
         if(object.getType() == StaticElementType.Coin) this.numberOfCoins -= 1;
-        if(this.numberOfCoins % 50 == 0) this.engine.generateFruit();
+        if(this.numberOfCoins % 50 == 0 && this.numberOfCoins > 0) this.engine.generateFruit();
         this.staticMapElements[position.x][position.y] = null;
-        if(this.numberOfCoins == 0) this.engine.startNewRound();
+        if(this.numberOfCoins == 0) this.engine.setPaused(true);
+
     }
 
     public boolean isOccupied(Vector2d position) {

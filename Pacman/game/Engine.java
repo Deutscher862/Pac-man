@@ -1,6 +1,7 @@
 package Pacman.game;
 
 import Pacman.visualizer.VizualizerFX;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -13,17 +14,21 @@ public class Engine {
     private final Vector2d mapSize;
     private final FileScanner reader;
     private final ArrayList<Ghost> ghostList=  new ArrayList<>();
-    private int refreshTime;
+    private int ghostVelocity;
     private int roundNumber;
     private int lives;
     private int points;
     private Player pacman;
+    private Thread playerMove;
+    private Thread ghostsMove;
+    private boolean paused;
 
     public Engine(Stage stage){
-        this.refreshTime = 100;
+        this.ghostVelocity = 300;
         this.stage = stage;
         this.roundNumber = 1;
         this.reader = new FileScanner();
+        this.paused = true;
         this.mapSize = new Vector2d(28, 32);
         this.map = new Map(this.mapSize, this);
         placeObjectsAtMap();
@@ -37,23 +42,33 @@ public class Engine {
     }
 
     public void run(){
-        Thread t1 = new Thread(() ->{
-            while(lives > 0) {
+        this.paused = false;
+        playerMove = new Thread(() ->{
+            while(!this.paused && lives > 0) {
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 moveDynamicElement(this.pacman);
-                this.vizualizer.UpdateRightPanel();
+                this.vizualizer.updateRightPanel();
             }
+            new java.util.Timer().schedule(
+                    new java.util.TimerTask() {
+                        @Override
+                        public void run() {
+                            startNewRound();
+                        }
+                    },
+                    2000
+            );
         });
-        t1.start();
+        playerMove.start();
 
-        Thread t2 = new Thread(() ->{
-            while(lives > 0) {
+        ghostsMove = new Thread(() ->{
+            while(!this.paused && lives > 0) {
                 try {
-                    Thread.sleep(300);
+                    Thread.sleep(this.ghostVelocity);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -61,7 +76,7 @@ public class Engine {
                     moveDynamicElement(ghost);
             }
         });
-        t2.start();
+        ghostsMove.start();
     }
 
     public int getLives() {
@@ -76,14 +91,20 @@ public class Engine {
         return this.roundNumber;
     }
 
+    public void setPaused(boolean paused) {
+        this.paused = paused;
+    }
+
     public void setPlayerDirection(Direction direction){
         this.pacman.setDirection(direction);
         this.pacman.rotateImage();
     }
 
     private void informAboutNewPosition(Vector2d oldPosition, AbstractDynamicMapElement object){
-        this.vizualizer.changeImage(oldPosition, this.map.objectAt(oldPosition));
-        this.vizualizer.changeImage(object.getPosition(), object);
+        Platform.runLater(()->{
+            this.vizualizer.changeImage(oldPosition, this.map.objectAt(oldPosition));
+            this.vizualizer.changeImage(object.getPosition(), object);
+        });
     }
 
     private void moveDynamicElement(AbstractDynamicMapElement object){
@@ -99,7 +120,7 @@ public class Engine {
                 //uruchamiam tryb powerUp
                 if(staticMapElement.getType() == StaticElementType.Star) setPowerUpMode(true);
                 this.points += staticMapElement.getPointValue();
-                this.vizualizer.changeImage(staticMapElement.getPosition(), null);
+                Platform.runLater(()-> this.vizualizer.changeImage(staticMapElement.getPosition(), null));
                 this.map.removeStaticObject(staticMapElement);
                 //jeśli gracz wejdzie na pole z duchem
                 for(Ghost ghost: this.ghostList){
@@ -116,7 +137,6 @@ public class Engine {
     }
 
     private void setPowerUpMode(Boolean powerUpOn) {
-        System.out.println(powerUpOn);
         this.pacman.setPowerUp(powerUpOn);
         for(Ghost ghost : this.ghostList){
             if(powerUpOn) ghost.setImage(Ghost.getVulnerableImage());
@@ -165,11 +185,21 @@ public class Engine {
             newFruitPosition = this.mapSize.getRandomPosition();
         StaticMapElement fruit = new StaticMapElement(newFruitPosition, "resources/fruit.png", 5*this.roundNumber, StaticElementType.Fruit);
         this.map.place(fruit);
-        this.vizualizer.changeImage(newFruitPosition, fruit);
+        Platform.runLater(()-> this.vizualizer.changeImage(fruit.getPosition(), fruit));
     }
 
     public void startNewRound() {
         this.roundNumber += 1;
+        this.map.clear();
+        if(this.ghostVelocity > 75)
+        this.ghostVelocity -= 25;
+        placeObjectsAtMap();
+        this.vizualizer.resetGrid();
+        run();
+    }
+
+    public void endGame(){
+        System.exit(0);
     }
 
     private void placeObjectsAtMap(){
@@ -179,20 +209,25 @@ public class Engine {
         int column = 0;
         for (char ch: stringMap.toCharArray()) {
             position = new Vector2d(column, row);
-            AbstractMapElement object;
+            AbstractMapElement object = null;
             switch (ch) {
                 case '0' -> object = new StaticMapElement(position, "resources/wall.jpg", 0, StaticElementType.Wall);
                 case '1' -> object = new StaticMapElement(position, "resources/coin.png", this.roundNumber, StaticElementType.Coin);
                 case '2' -> object = new StaticMapElement(position, "resources/star.png", 15*this.roundNumber, StaticElementType.Star);
                 case '4' -> {
-                    object = new Ghost(position, this.map, Direction.NORTH, this.ghostList.size()+1);
-                    this.ghostList.add((Ghost) object);
+                    if(this.roundNumber == 1) {
+                        object = new Ghost(position, this.map, Direction.NORTH, this.ghostList.size() + 1);
+                        this.ghostList.add((Ghost) object);
+                    }
                 }
                 case '8' -> {
-                    object = new Player(position, this.map, null);
-                    this.pacman = (Player) object;
+                    if(this.roundNumber == 1) {
+                        object = new Player(position, this.map, null);
+                        this.pacman = (Player) object;
+                    }
                 }
-                case '9' -> object = null;
+                case '9' -> {
+                }
                 default -> throw new IllegalStateException("Unexpected value: " + ch);
             }
             if (object != null) this.map.place(object);
@@ -200,6 +235,12 @@ public class Engine {
             if(column == 28){
                 column = 0;
                 row += 1;
+            }
+        }
+        if(this.roundNumber > 1){
+            this.pacman.setPosition(this.pacman.getInitialPosition());
+            for(Ghost ghost : this.ghostList){
+                ghost.setPosition(ghost.getInitialPosition());
             }
         }
     }
