@@ -37,8 +37,10 @@ public class Engine {
         stage.show();
     }
 
-    public void run(){
+    public void run() throws InterruptedException {
         this.paused = false;
+        this.vizualizer.setTimer(3);
+
         Thread playerMove = new Thread(() -> {
             while (!this.paused && lives > 0) {
                 try {
@@ -53,10 +55,14 @@ public class Engine {
                     new java.util.TimerTask() {
                         @Override
                         public void run() {
-                            startNewRound();
+                            try {
+                                startNewRound();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                         }
                     },
-                    2000
+                    500
             );
         });
         playerMove.start();
@@ -184,7 +190,7 @@ public class Engine {
         Platform.runLater(()-> this.vizualizer.changeImage(fruit.getPosition(), fruit));
     }
 
-    public void startNewRound() {
+    public void startNewRound() throws InterruptedException {
         if(this.lives == 0){
             this.vizualizer.setGameOverInformation();
         }

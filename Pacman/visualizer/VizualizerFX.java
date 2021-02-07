@@ -16,6 +16,7 @@ public class VizualizerFX {
     private final Engine engine;
     private final Text rightPanel;
     private final Text gameOverInformation;
+    private final Text timer;
     private final Tile[][] grid = new Tile[28][32];
 
     public VizualizerFX(Stage stage, Map map, Engine engine){
@@ -37,13 +38,21 @@ public class VizualizerFX {
 
         //informacja o końcu gry
         this.gameOverInformation = new Text();
-        this.gameOverInformation.setText("Game over!");
+        this.gameOverInformation.setText("Game over :(");
         this.gameOverInformation.setFill(Color.WHITE);
         this.gameOverInformation.setFont(Font.font("Verdana", 50));
         this.gameOverInformation.setTranslateX(650);
         this.gameOverInformation.setTranslateY(400);
         this.gameOverInformation.setVisible(false);
         this.root.getChildren().add(gameOverInformation);
+
+        this.timer = new Text();
+        this.timer.setFill(Color.WHITE);
+        this.timer.setFont(Font.font("Verdana", 40));
+        this.timer.setTranslateX(300);
+        this.timer.setTranslateY(405);
+        this.root.getChildren().add(timer);
+
 
 
         for(int i = 0; i < 28; i++){
@@ -63,6 +72,8 @@ public class VizualizerFX {
                 case ESCAPE -> engine.endGame();
             }
         });
+
+        this.timer.toFront();
     }
     public Pane getRoot() {
         return root;
@@ -70,6 +81,16 @@ public class VizualizerFX {
 
     public void setGameOverInformation(){
         this.gameOverInformation.setVisible(true);
+    }
+
+    public void setTimer(int seconds) throws InterruptedException {
+        while(seconds >= 0){
+            if(seconds == 0) this.timer.setText("GO");
+            else this.timer.setText(String.valueOf(seconds));
+            Thread.sleep(1000);
+            seconds -= 1;
+        }
+        this.timer.setText("");
     }
 
     public void changeImage(Vector2d position, AbstractMapElement object){
