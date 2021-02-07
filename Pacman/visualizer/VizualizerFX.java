@@ -41,7 +41,7 @@ public class VizualizerFX {
         this.gameOverInformation.setText("Game over :(");
         this.gameOverInformation.setFill(Color.WHITE);
         this.gameOverInformation.setFont(Font.font("Verdana", 50));
-        this.gameOverInformation.setTranslateX(650);
+        this.gameOverInformation.setTranslateX(620);
         this.gameOverInformation.setTranslateY(400);
         this.gameOverInformation.setVisible(false);
         this.root.getChildren().add(gameOverInformation);

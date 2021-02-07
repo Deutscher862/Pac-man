@@ -37,9 +37,8 @@ public class Engine {
         stage.show();
     }
 
-    public void run() throws InterruptedException {
+    public void run(){
         this.paused = false;
-        this.vizualizer.setTimer(3);
 
         Thread playerMove = new Thread(() -> {
             while (!this.paused && lives > 0) {
@@ -196,13 +195,15 @@ public class Engine {
         }
         else {
             this.roundNumber += 1;
-            if (this.ghostVelocity > 75)
+            if (this.ghostVelocity > 100)
                 this.ghostVelocity -= 25;
+            System.out.println(this.ghostVelocity);
             this.pacman.setDirection(null);
 
             this.map.clear();
             placeObjectsAtMap();
             this.vizualizer.resetGrid();
+            this.vizualizer.setTimer(3);
             run();
         }
     }
