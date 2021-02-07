@@ -21,6 +21,7 @@ public class Player extends AbstractDynamicMapElement {
     }
 
     public void rotateImage(){
+        //obrót wyświetlanego zdjęcia tak by zgadzał się z kierunkiem gracza
         if(this.direction == null) return;
         while(this.imageDirection != this.direction){
             ImageView iv = new ImageView(this.getImage());

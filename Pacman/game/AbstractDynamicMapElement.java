@@ -22,12 +22,12 @@ abstract class AbstractDynamicMapElement extends AbstractMapElement{
         return direction;
     }
 
-    public void setDirection(Direction direction) {
-        this.direction = direction;
-    }
-
     public boolean isRespawning() {
         return respawning;
+    }
+
+    public void setDirection(Direction direction) {
+        this.direction = direction;
     }
 
     public void setRespawning(boolean respawning) {
@@ -37,9 +37,11 @@ abstract class AbstractDynamicMapElement extends AbstractMapElement{
     public void move(){
         Vector2d newPosition;
         newPosition = super.getPosition().add(this.direction.toUnitVector());
+
         //jeśli wyjdzie po za mapę to wraca po drugiej stronie
         if(newPosition.x == -1) newPosition = new Vector2d(27, newPosition.y);
         else if(newPosition.x == 28) newPosition = new Vector2d(0, newPosition.y);
+
         if(map.canMoveTo(newPosition)){
             super.position = newPosition;
         }

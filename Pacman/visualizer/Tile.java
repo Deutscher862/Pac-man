@@ -10,11 +10,11 @@ import javafx.scene.layout.StackPane;
 public class Tile extends StackPane {
     private static int size;
     private static Canvas canvas;
-    //pojedyncza płytka reprezentująca pojedyncze pole na mapie
     private final GraphicsContext border;
     private final Vector2d position;
 
     public Tile(Canvas canvas, int size, Vector2d position, AbstractMapElement object) {
+        //pojedyncza płytka reprezentująca pojedyncze pole na mapie
         Tile.canvas = canvas;
         Tile.size = size;
         this.position = position;

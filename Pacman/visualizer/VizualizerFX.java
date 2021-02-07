@@ -46,6 +46,7 @@ public class VizualizerFX {
         this.gameOverInformation.setVisible(false);
         this.root.getChildren().add(gameOverInformation);
 
+        //tekst na którym wyświetlane jest odliczanie przed początkiem nowej rundy
         this.timer = new Text();
         this.timer.setFill(Color.WHITE);
         this.timer.setFont(Font.font("Verdana", 40));
@@ -53,8 +54,7 @@ public class VizualizerFX {
         this.timer.setTranslateY(405);
         this.root.getChildren().add(timer);
 
-
-
+        //wypełnianie planszy wyświetlającej mapę
         for(int i = 0; i < 28; i++){
             for(int j = 0; j < 32; j++){
                 Vector2d position = new Vector2d(i, j);
@@ -63,6 +63,7 @@ public class VizualizerFX {
             }
         }
 
+        //event pozwlający sterować pacmanem
         stage.addEventFilter(KeyEvent.KEY_PRESSED, (key) -> {
             switch (key.getCode()) {
                 case UP,W -> engine.setPlayerDirection(Direction.NORTH);
@@ -99,6 +100,7 @@ public class VizualizerFX {
     }
 
     public void resetGrid(){
+        //resetowanie wyświetlania mapy przed nową rundą
         Vector2d position;
         for(int i = 0; i < 28; i++){
             for(int j = 0; j < 32; j++){

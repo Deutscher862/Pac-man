@@ -24,5 +24,4 @@ public abstract class AbstractMapElement{
     public void setImage(Image image){
         this.image = image;
     }
-
 }

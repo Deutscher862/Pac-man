@@ -40,11 +40,12 @@ public class Engine {
         stage.setTitle("Pacman");
         stage.setScene(new Scene(vizualizer.getRoot(), 1000, 800, Color.BLACK));
         stage.show();
-        this.player.playStartSound("src/resources/audio/pacman_beginning.wav");
+        this.player.playSound("src/resources/audio/pacman_beginning.wav");
     }
 
     public void run(){
         this.paused = false;
+
         //2 osobne wątki do poruszania pacmanem oraz duchami
         Thread playerMove = new Thread(() -> {
             while (!this.paused && lives > 0) {
@@ -117,25 +118,28 @@ public class Engine {
 
     private void moveDynamicElement(AbstractDynamicMapElement object){
         if((object instanceof Player && object.getDirection() == null) || object.isRespawning()) return;
+
         Vector2d oldPosition;
         Vector2d newPosition;
         oldPosition = object.getPosition();
         object.move();
         newPosition = object.getPosition();
+
         if(!oldPosition.equals(newPosition)) {
             StaticMapElement staticMapElement = this.map.getStaticElement(newPosition);
             if (object instanceof Player && staticMapElement != null) {
-                //uruchamiam tryb powerUp
                 switch (staticMapElement.getType()){
                     case Star -> setPowerUpMode(true);
-                    case Fruit -> this.player.playStartSound("src/resources/audio/pacman_eatfruit.wav");
+                    case Fruit -> this.player.playSound("src/resources/audio/pacman_eatfruit.wav");
                     case Coin -> this.player.playChompSound();
                     default -> {
                     }
                 }
+
                 this.points += staticMapElement.getPointValue();
                 Platform.runLater(()-> this.vizualizer.changeImage(staticMapElement.getPosition(), null));
                 this.map.removeStaticObject(staticMapElement);
+
                 //jeśli gracz wejdzie na pole z duchem
                 for(Ghost ghost: this.ghostList){
                     if(ghost.getPosition().equals(object.position))
@@ -157,6 +161,7 @@ public class Engine {
             else ghost.setImage(ghost.getInitialImage());
         }
         if(powerUpOn) {
+            //ustawinie wyłączenia powerUp'a z opóźnieniem
             new java.util.Timer().schedule(
                     new java.util.TimerTask() {
                         @Override
@@ -170,11 +175,13 @@ public class Engine {
     }
 
     private void killObject(AbstractDynamicMapElement ghost){
+        //przekazany jest duch, który znalazł się na tym samym polu co gracz
         AbstractDynamicMapElement objectToBeKilled;
+        //wybierany jest obiekt, który zostaje przeniesiony, w zależności, czy powerUp jest włączony
         if(!this.pacman.getPowerUp()){
             objectToBeKilled = this.pacman;
             this.lives -= 1;
-            player.playStartSound("src/resources/audio/pacman_death.wav");
+            player.playSound("src/resources/audio/pacman_death.wav");
             setPlayerDirection(null);
         }
         else{
@@ -182,10 +189,15 @@ public class Engine {
             player.playDeadGhostSound();
         }
 
+        //zabity obiekt się odradza, w tym czasie nie może się ruszyć
         objectToBeKilled.setRespawning(true);
+
+        //zabity obiekt zostaje przeniesiony na swoją pierwotną pozycję
         Vector2d oldPosition = objectToBeKilled.getPosition();
         objectToBeKilled.setPosition(objectToBeKilled.getInitialPosition());
         informAboutNewPosition(oldPosition, objectToBeKilled);
+
+        //koniec odradzania po odpowiednim czasie
         new java.util.Timer().schedule(
                 new java.util.TimerTask() {
                     @Override
@@ -198,6 +210,7 @@ public class Engine {
     }
 
     public void generateFruit(){
+        //na mapie zostaje umieszczony owoc na losowej pustej pozycji
         Vector2d newFruitPosition = this.mapSize.getRandomPosition();
         while(this.map.isOccupied(newFruitPosition))
             newFruitPosition = this.mapSize.getRandomPosition();
@@ -207,9 +220,11 @@ public class Engine {
     }
 
     public void startNewRound() throws InterruptedException {
+        //jeśli gracz nie ma żyć, gra się kończy
         if(this.lives == 0){
             this.vizualizer.setGameOverInformation();
         }
+        //przed nową rundą ustawiany jest większy poziom trudności oraz elementy na mapie resetują się
         else {
             this.roundNumber += 1;
             if (this.ghostVelocity > 150)
@@ -231,6 +246,7 @@ public class Engine {
     }
 
     private void placeObjectsAtMap(){
+        //umiejscowanie wczytanych elementów na mapie
         String stringMap = this.reader.readMapFromTxt();
         Vector2d position;
         int row = 0;
@@ -265,6 +281,7 @@ public class Engine {
                 row += 1;
             }
         }
+        //jeśli elementy ruchome mapy już na niej są, ustawiam je na ich pierwotnej pozycji
         if(this.roundNumber > 1){
             this.pacman.setPosition(this.pacman.getInitialPosition());
             for(Ghost ghost : this.ghostList){

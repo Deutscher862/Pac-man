@@ -14,6 +14,7 @@ public class Vector2d {
     }
 
     public Direction getDirectionTowardsVector(Vector2d endPosition){
+        //metoda zwraca kierunek między dwoma pozycjami
         if(this.x != endPosition.x ){
             if(this.x > endPosition.x) return Direction.WEST;
             else return Direction.EAST;
@@ -31,16 +32,6 @@ public class Vector2d {
         if (o == null || getClass() != o.getClass()) return false;
         Vector2d vector2d = (Vector2d) o;
         return x == vector2d.x && y == vector2d.y;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(x, y);
-    }
-
-    @Override
-    public String toString() {
-        return ("(" + this.x +  ", " + this.y + ")");
     }
 
     public Vector2d add(Vector2d other){

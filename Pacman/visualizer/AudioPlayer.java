@@ -14,7 +14,7 @@ public class AudioPlayer {
         this.deadGhostPlayer = new MediaPlayer(new Media(new File("src/resources/audio/pacman_eatghost.wav").toURI().toString()));
     }
 
-    public void playStartSound(String path){
+    public void playSound(String path){
         Media sound = new Media(new File(path).toURI().toString());
         MediaPlayer player = new MediaPlayer(sound);
         player.play();
