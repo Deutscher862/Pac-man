@@ -228,7 +228,7 @@ public class Engine {
         else {
             this.roundNumber += 1;
             if (this.ghostVelocity > 150)
-                this.ghostVelocity -= 25;
+                this.ghostVelocity -= 50;
             if(this.powerUpTime > 2000)
                 this.powerUpTime -= 500;
             this.pacman.setDirection(null);
