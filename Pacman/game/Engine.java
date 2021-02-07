@@ -1,5 +1,6 @@
 package Pacman.game;
 
+import Pacman.visualizer.AudioPlayer;
 import Pacman.visualizer.VizualizerFX;
 import javafx.application.Platform;
 import javafx.scene.Scene;
@@ -8,12 +9,14 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 
 public class Engine {
-    private final VizualizerFX vizualizer;
-    private final Map map;
-    private final Vector2d mapSize;
     private final FileScanner reader;
+    private final Vector2d mapSize;
+    private final Map map;
+    private final VizualizerFX vizualizer;
+    private final AudioPlayer player;
     private final ArrayList<Ghost> ghostList=  new ArrayList<>();
     private int ghostVelocity;
+    private int powerUpTime;
     private int roundNumber;
     private int lives;
     private int points;
@@ -21,35 +24,39 @@ public class Engine {
     private boolean paused;
 
     public Engine(Stage stage){
-        this.ghostVelocity = 300;
-        this.roundNumber = 1;
         this.reader = new FileScanner();
-        this.paused = true;
         this.mapSize = new Vector2d(28, 32);
         this.map = new Map(this.mapSize, this);
+        this.roundNumber = 1;
         placeObjectsAtMap();
         this.vizualizer = new VizualizerFX(stage, this.map, this);
+        this.player = new AudioPlayer();
+        this.ghostVelocity = 300;
+        this.powerUpTime= 5000;
+        this.paused = true;
         this.lives = 3;
         this.points = 0;
 
         stage.setTitle("Pacman");
         stage.setScene(new Scene(vizualizer.getRoot(), 1000, 800, Color.BLACK));
         stage.show();
+        this.player.playStartSound("src/resources/audio/pacman_beginning.wav");
     }
 
     public void run(){
         this.paused = false;
-
+        //2 osobne wątki do poruszania pacmanem oraz duchami
         Thread playerMove = new Thread(() -> {
             while (!this.paused && lives > 0) {
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(150);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 moveDynamicElement(this.pacman);
                 this.vizualizer.updateRightPanel();
             }
+            //przed rozpoczęciem nowej rundy czekam na ewentualny ostatni ruch duch
             new java.util.Timer().schedule(
                     new java.util.TimerTask() {
                         @Override
@@ -119,7 +126,13 @@ public class Engine {
             StaticMapElement staticMapElement = this.map.getStaticElement(newPosition);
             if (object instanceof Player && staticMapElement != null) {
                 //uruchamiam tryb powerUp
-                if(staticMapElement.getType() == StaticElementType.Star) setPowerUpMode(true);
+                switch (staticMapElement.getType()){
+                    case Star -> setPowerUpMode(true);
+                    case Fruit -> this.player.playStartSound("src/resources/audio/pacman_eatfruit.wav");
+                    case Coin -> this.player.playChompSound();
+                    default -> {
+                    }
+                }
                 this.points += staticMapElement.getPointValue();
                 Platform.runLater(()-> this.vizualizer.changeImage(staticMapElement.getPosition(), null));
                 this.map.removeStaticObject(staticMapElement);
@@ -151,7 +164,7 @@ public class Engine {
                             setPowerUpMode(false);
                         }
                     },
-                    2000
+                    this.powerUpTime
             );
         }
     }
@@ -161,9 +174,13 @@ public class Engine {
         if(!this.pacman.getPowerUp()){
             objectToBeKilled = this.pacman;
             this.lives -= 1;
+            player.playStartSound("src/resources/audio/pacman_death.wav");
             setPlayerDirection(null);
         }
-        else objectToBeKilled = ghost;
+        else{
+            objectToBeKilled = ghost;
+            player.playDeadGhostSound();
+        }
 
         objectToBeKilled.setRespawning(true);
         Vector2d oldPosition = objectToBeKilled.getPosition();
@@ -195,9 +212,10 @@ public class Engine {
         }
         else {
             this.roundNumber += 1;
-            if (this.ghostVelocity > 100)
+            if (this.ghostVelocity > 150)
                 this.ghostVelocity -= 25;
-            System.out.println(this.ghostVelocity);
+            if(this.powerUpTime > 2000)
+                this.powerUpTime -= 500;
             this.pacman.setDirection(null);
 
             this.map.clear();

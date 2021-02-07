@@ -61,7 +61,6 @@ public class Map {
         if(this.numberOfCoins % 50 == 0 && this.numberOfCoins > 0) this.engine.generateFruit();
         this.staticMapElements[position.x][position.y] = null;
         if(this.numberOfCoins == 0) this.engine.setPaused(true);
-
     }
 
     public boolean isOccupied(Vector2d position) {
