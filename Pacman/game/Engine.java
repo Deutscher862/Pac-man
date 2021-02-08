@@ -194,7 +194,7 @@ public class Engine {
 
         //zabity obiekt zostaje przeniesiony na swoją pierwotną pozycję
         Vector2d oldPosition = objectToBeKilled.getPosition();
-        objectToBeKilled.setPosition(objectToBeKilled.getInitialPosition());
+        objectToBeKilled.moveToInitialPosition();
         informAboutNewPosition(oldPosition, objectToBeKilled);
 
         //koniec odradzania po odpowiednim czasie
@@ -283,9 +283,9 @@ public class Engine {
         }
         //jeśli elementy ruchome mapy już na niej są, ustawiam je na ich pierwotnej pozycji
         if(this.roundNumber > 1){
-            this.pacman.setPosition(this.pacman.getInitialPosition());
+            this.pacman.moveToInitialPosition();
             for(Ghost ghost : this.ghostList){
-                ghost.setPosition(ghost.getInitialPosition());
+                ghost.moveToInitialPosition();
             }
         }
     }

@@ -46,4 +46,8 @@ abstract class AbstractDynamicMapElement extends AbstractMapElement{
             super.position = newPosition;
         }
     }
+
+    public void moveToInitialPosition(){
+        this.position = this.initialPosition;
+    }
 }
